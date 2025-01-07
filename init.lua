@@ -1028,6 +1028,24 @@ require('lazy').setup({
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
     },
   },
+  {
+    "mbbill/undotree",
+    config = function()
+      vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+    end
+  },
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "VeryLazy",
+    opts = {
+      hint_prefix = {
+        above = "↙ ",  -- when the hint is on the line above the current line
+        current = "← ",  -- when the hint is on the same line
+        below = "↖ "  -- when the hint is on the line below the current line
+      },
+    },
+    config = function(_, opts) require'lsp_signature'.setup(opts) end
+  },
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
