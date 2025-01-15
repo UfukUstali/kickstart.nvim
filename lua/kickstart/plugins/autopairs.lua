@@ -2,7 +2,7 @@
 -- https://github.com/windwp/nvim-autopairs
 
 return {
-  "windw/pnvim-ts-autotag",
+  "windwp/nvim-ts-autotag",
   {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
