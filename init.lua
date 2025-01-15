@@ -624,6 +624,7 @@ require('lazy').setup({
         gopls = {},
         -- pyright = {},
         rust_analyzer = {},
+        docker_compose_language_service = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -643,6 +644,7 @@ require('lazy').setup({
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         volar = {},
+        tailwindcss = {},
         --
 
         lua_ls = {
@@ -780,8 +782,11 @@ require('lazy').setup({
     config = function()
       -- See `:help cmp`
       local cmp = require 'cmp'
+
       local luasnip = require 'luasnip'
+      require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/lua/snippets" })
       luasnip.config.setup {}
+
 
       cmp.setup {
         snippet = {
