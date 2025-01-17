@@ -3,7 +3,7 @@
 
 return {
   {
-    "windwp/nvim-ts-autotag",
+    'windwp/nvim-ts-autotag',
     config = function()
       require('nvim-ts-autotag').setup {}
     end,
@@ -20,5 +20,5 @@ return {
       local cmp = require 'cmp'
       cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
     end,
-  }
+  },
 }

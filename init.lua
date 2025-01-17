@@ -813,9 +813,8 @@ require('lazy').setup({
       local cmp = require 'cmp'
 
       local luasnip = require 'luasnip'
-      require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/lua/snippets" })
+      require('luasnip.loaders.from_lua').lazy_load { paths = { '~/.config/nvim/lua/snippets' } }
       luasnip.config.setup {}
-
 
       cmp.setup {
         snippet = {
