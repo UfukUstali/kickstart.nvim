@@ -97,12 +97,13 @@ vim.keymap.set('n', '<C-u>', '<C-u>zt', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-d>', '<C-d>zt', { noremap = true, silent = true })
 
 -- Prevent regular y, d, and c from overriding the clipboard
--- vim.keymap.set({ 'n', 'v' }, 'y', '"_y', { noremap = true })
+vim.keymap.set('x', 'p', '"_dP', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, 'd', '"_d', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, 'c', '"_c', { noremap = true })
 vim.keymap.set('n', 'x', '"_x', { noremap = true })
 
 -- Allow leader-prefixed y, d, and c to use the clipboard
+vim.keymap.set('x', '<leader>p', '"+dP', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true })
 vim.keymap.set('n', '<leader>Y', '"+Y', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, '<leader>d', '"+d', { noremap = true })
