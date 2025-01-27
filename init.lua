@@ -86,14 +86,27 @@ P.S. You can delete this when you're done too. It's your config now! :)
 
 vim.env.LANG = 'en_US.UTF-8'
 vim.o.wrap = false
-vim.keymap.set('n', '<C-u>', '<C-u>zt', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-d>', '<C-d>zt', { noremap = true, silent = true })
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+vim.keymap.set('n', '<C-u>', '<C-u>zt', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-d>', '<C-d>zt', { noremap = true, silent = true })
+
+-- Prevent regular y, d, and c from overriding the clipboard
+-- vim.keymap.set({ 'n', 'v' }, 'y', '"_y', { noremap = true })
+vim.keymap.set({ 'n', 'v' }, 'd', '"_d', { noremap = true })
+vim.keymap.set({ 'n', 'v' }, 'c', '"_c', { noremap = true })
+vim.keymap.set('n', 'x', '"_x', { noremap = true })
+
+-- Allow leader-prefixed y, d, and c to use the clipboard
+vim.keymap.set({ 'n', 'v' }, '<leader>y', '"+y', { noremap = true })
+vim.keymap.set('n', '<leader>Y', '"+Y', { noremap = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>d', '"+d', { noremap = true })
+vim.keymap.set({ 'n', 'v' }, '<leader>c', '"+c', { noremap = true })
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
@@ -119,9 +132,9 @@ vim.opt.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.opt.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.opt.breakindent = true
