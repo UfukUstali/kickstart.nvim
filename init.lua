@@ -727,6 +727,12 @@ require('lazy').setup({
                 templ = 'html',
                 htmlangular = 'html',
               },
+              experimental = {
+                classRegex = {
+                  { 'ui:\\s*{([^)]*)\\s*}', '["\'`]([^"\'`]*).*?["\'`]' },
+                  { '/\\*\\s?ui\\s?\\*/\\s*{([^;]*)}', ':\\s*["\'`]([^"\'`]*).*?["\'`]' },
+                },
+              },
             },
           },
         },
