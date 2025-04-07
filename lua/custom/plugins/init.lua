@@ -4,12 +4,6 @@
 -- See the kickstart.nvim README for more information
 return {
   {
-    'windwp/nvim-ts-autotag',
-    config = function()
-      require('nvim-ts-autotag').setup {}
-    end,
-  },
-  {
     'ThePrimeagen/harpoon',
     branch = 'harpoon2',
     dependencies = { 'nvim-lua/plenary.nvim' },
