@@ -926,6 +926,9 @@ require('lazy').setup({
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
         documentation = { auto_show = true, auto_show_delay_ms = 500 },
         ghost_text = { enabled = true },
+        accept = {
+          auto_brackets = { enabled = false },
+        },
       },
 
       sources = {
