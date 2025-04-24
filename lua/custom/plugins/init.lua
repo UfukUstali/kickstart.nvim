@@ -54,7 +54,32 @@ return {
   -- },
   {
     'folke/trouble.nvim',
-    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    -- for default options, refer to the configuration section for custom setup.
+    config = function()
+      local trouble = require 'trouble'
+      trouble.setup { focus = true }
+      vim.keymap.set('n', '<leader>tc', function()
+        -- Get all items from Trouble
+        local items = trouble.get_items()
+
+        -- Convert to quickfix format
+        local qf_items = {}
+        for _, item in ipairs(items) do
+          table.insert(qf_items, {
+            filename = item.filename,
+            lnum = item.lnum,
+            col = item.col,
+            text = item.text,
+            buf = item.buf,
+          })
+        end
+        trouble.close()
+
+        -- Set quickfix list
+        vim.fn.setqflist(qf_items)
+        vim.cmd [[botright copen]]
+      end)
+    end,
     cmd = 'Trouble',
     keys = {
       {

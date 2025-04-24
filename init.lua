@@ -431,6 +431,14 @@ require('lazy').setup({
             height = 0.8,
             preview_width = 0.65,
           },
+          mappings = {
+            i = {
+              ['<c-t>'] = require('trouble.sources.telescope').open,
+            },
+            n = {
+              ['<c-t>'] = require('trouble.sources.telescope').open,
+            },
+          },
         },
         extensions = {
           ['ui-select'] = {
