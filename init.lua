@@ -1105,23 +1105,6 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
     end,
   },
-  {
-    'ray-x/lsp_signature.nvim',
-    event = 'VeryLazy',
-    opts = {
-      hint_prefix = {
-        above = '↙ ', -- when the hint is on the line above the current line
-        current = '← ', -- when the hint is on the same line
-        below = '↖ ', -- when the hint is on the line below the current line
-      },
-    },
-    config = function(_, opts)
-      require('lsp_signature').setup(opts)
-      vim.keymap.set({ 'n', 'i' }, '<C-k>', function()
-        require('lsp_signature').toggle_float_win()
-      end, { silent = true, noremap = true, desc = 'toggle signature' })
-    end,
-  },
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
