@@ -1,0 +1,42 @@
+{
+  "iter": {
+    "prefix": "iter",
+    "body": [".${1:|map,forEach,filter|}((${2:arg}) => {", "${3:body}", "})"]
+  },
+  "import": {
+    "prefix": "import",
+    "body": "import { ${2} } from \"${1:module}\";"
+  },
+  "import:default": {
+    "prefix": "import:default",
+    "body": "import ${2} from \"${1:module}\";"
+  },
+  "import:db": {
+    "prefix": "import:db",
+    "body": ["import db from \"db/db\";", "import { ${2} } from \"db/schema\";"]
+  },
+  "nitro:handler": {
+    "prefix": "nitro:handler",
+    "body": [
+      "export default defineEventHandler(async (event) => {",
+      "  ${1}",
+      "});"
+    ]
+  },
+  "nitro:body": {
+    "prefix": "nitro:body",
+    "body": [
+      "  const body = await readValidatedBody(event,",
+      "    ${1:zod}",
+      "  );"
+    ]
+  },
+  "nitro:query": {
+    "prefix": "nitro:query",
+    "body": [
+      "  const query = await getValidatedQuery(event,",
+      "    ${1:zod}",
+      "  );"
+    ]
+  }
+}

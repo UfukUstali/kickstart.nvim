@@ -1,0 +1,22 @@
+{
+  "v:base": {
+    "prefix": "v:base",
+    "body": [
+      "<script setup lang=\"ts\"></script>",
+      "",
+      "<template>",
+      "  <div></div>",
+      "</template>"
+    ]
+  },
+  "v:modal": {
+    "prefix": "v:modal",
+    "body": [
+      "<script setup lang=\"ts\"></script>",
+      "",
+      "<template>",
+      "  <UModal title=\"${1:title}\"></UModal>",
+      "</template>"
+    ]
+  }
+}
