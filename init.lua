@@ -960,7 +960,13 @@ require('lazy').setup({
       fuzzy = { implementation = 'prefer_rust_with_warning' },
 
       -- Shows a signature help window while you type arguments for a function
-      signature = { enabled = true },
+      signature = {
+        enabled = true,
+        trigger = {
+          show_on_trigger_character = false,
+          show_on_insert_on_trigger_character = false,
+        },
+      },
     },
   },
 

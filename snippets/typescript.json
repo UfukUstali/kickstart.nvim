@@ -26,17 +26,40 @@
   "nitro:body": {
     "prefix": "nitro:body",
     "body": [
-      "  const body = await readValidatedBody(event,",
+      "const body = await readValidatedBody(event,",
+      "  z.object({",
       "    ${1:zod}",
-      "  );"
+      "  }).safeParse",
+      ");",
+      "if (!body.success) {",
+      "  throw createError({ status: 400 });",
+      "}"
     ]
   },
   "nitro:query": {
     "prefix": "nitro:query",
     "body": [
-      "  const query = await getValidatedQuery(event,",
+      "const query = await getValidatedQuery(event,",
+      "  z.object({",
       "    ${1:zod}",
-      "  );"
+      "  }).safeParse",
+      ");",
+      "if (!query.success) {",
+      "  throw createError({ status: 400 });",
+      "}"
     ]
+  },
+  "nitro:auth": {
+    "prefix": "nitro:auth",
+    "body": [
+      "const authCtx = await auth.authenticate(event);",
+      "if (!authCtx) {",
+      "  throw createError({ status: 401 });",
+      "}"
+    ]
+  },
+  "nitro:error": {
+    "prefix": "nitro:error",
+    "body": ["throw createError({", "  status: ${1:code}", "});"]
   }
 }
