@@ -1,7 +1,7 @@
 {
-  "iter": {
-    "prefix": "iter",
-    "body": [".${1:|map,forEach,filter|}((${2:arg}) => {", "${3:body}", "})"]
+  "callback": {
+    "prefix": "callback",
+    "body": ["${1:map}((${2:arg}) => {", "${3:body}", "})"]
   },
   "import": {
     "prefix": "import",
