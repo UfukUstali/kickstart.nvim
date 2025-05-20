@@ -800,6 +800,19 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      local navic = require 'nvim-navic'
+      local navic_lsps = { 'ts_ls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
+      for _, value in ipairs(navic_lsps) do
+        local server = servers[value] or {}
+        local original_on_attach = server.on_attach
+        server.on_attach = function(client, bufnr)
+          if type(original_on_attach) == 'function' then
+            original_on_attach(client, bufnr)
+          end
+          navic.attach(client, bufnr)
+        end
+      end
+
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_installation = false,

@@ -128,7 +128,21 @@ return {
           lualine_y = { 'progress' },
           lualine_z = { 'location' },
         },
+        winbar = {
+          lualine_c = {
+            {
+              'navic',
+              color_correction = 'dynamic',
+              navic_opts = nil,
+            },
+          },
+        },
       }
     end,
+  },
+  {
+    'SmiteshP/nvim-navic',
+    requires = 'neovim/nvim-lspconfig',
+    opts = { highlight = true },
   },
 }
