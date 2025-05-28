@@ -801,13 +801,21 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       local navic = require 'nvim-navic'
-      local navic_lsps = { 'ts_ls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
+      local navic_lsps = { 'volar', 'ts_ls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
       for _, value in ipairs(navic_lsps) do
         local server = servers[value] or {}
         local original_on_attach = server.on_attach
         server.on_attach = function(client, bufnr)
           if type(original_on_attach) == 'function' then
             original_on_attach(client, bufnr)
+          end
+          if value == 'ts_ls' then
+            local ft = vim.api.nvim_get_option_value('filetype', {
+              buf = bufnr,
+            })
+            if ft == 'vue' then
+              return
+            end
           end
           navic.attach(client, bufnr)
         end
