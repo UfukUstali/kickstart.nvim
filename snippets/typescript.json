@@ -61,5 +61,19 @@
   "nitro:error": {
     "prefix": "nitro:error",
     "body": ["throw createError({", "  status: ${1:code}", "});"]
+  },
+  "drizzle:mysqlTable": {
+    "prefix": "drizzle:mysqlTable",
+    "body": [
+      "export const ${1} = mysqlTable(",
+      "  \"${2}\",",
+      "  {",
+      "    id: serial(\"id\").notNull(),",
+      "  },",
+      "  (table) => {",
+      "    return [primaryKey({ columns: [table.id] })${3}];",
+      "  },",
+      ");"
+    ]
   }
 }
