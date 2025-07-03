@@ -18,5 +18,9 @@
       "  <UModal title=\"${1:title}\"></UModal>",
       "</template>"
     ]
+  },
+  "v:temp": {
+    "prefix": "v:temp",
+    "body": ["<template #${1}>", "", "</template>"]
   }
 }

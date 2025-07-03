@@ -13,7 +13,12 @@
   },
   "import:db": {
     "prefix": "import:db",
-    "body": ["import db from \"db/db\";", "import { ${2} } from \"db/schema\";"]
+    "body": [
+      "import {} from \"drizzle-orm\"",
+      "",
+      "import db from \"db/db\";",
+      "import { ${2} } from \"db/schema\";"
+    ]
   },
   "nitro:handler": {
     "prefix": "nitro:handler",
