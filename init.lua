@@ -657,25 +657,34 @@ require('lazy').setup({
         end,
       })
 
-      -- Change diagnostic symbols in the sign column (gutter)
-      if vim.g.have_nerd_font then
-        vim.diagnostic.config {
-          signs = {
-            text = {
-              [vim.diagnostic.severity.ERROR] = '',
-              [vim.diagnostic.severity.WARN] = '',
-              [vim.diagnostic.severity.HINT] = '',
-              [vim.diagnostic.severity.INFO] = '',
-            },
-            numhl = {
-              [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
-              [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
-              [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
-              [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
-            },
+      -- Diagnostic Config
+      -- See :help vim.diagnostic.Opts
+      vim.diagnostic.config {
+        severity_sort = true,
+        float = { border = 'rounded', source = 'if_many' },
+        underline = { severity = vim.diagnostic.severity.ERROR },
+        signs = vim.g.have_nerd_font and {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '󰅚 ',
+            [vim.diagnostic.severity.WARN] = '󰀪 ',
+            [vim.diagnostic.severity.INFO] = '󰋽 ',
+            [vim.diagnostic.severity.HINT] = '󰌶 ',
           },
-        }
-      end
+        } or {},
+        virtual_text = {
+          source = 'if_many',
+          spacing = 2,
+          format = function(diagnostic)
+            local diagnostic_message = {
+              [vim.diagnostic.severity.ERROR] = diagnostic.message,
+              [vim.diagnostic.severity.WARN] = diagnostic.message,
+              [vim.diagnostic.severity.INFO] = diagnostic.message,
+              [vim.diagnostic.severity.HINT] = diagnostic.message,
+            }
+            return diagnostic_message[diagnostic.severity]
+          end,
+        },
+      }
 
       vim.api.nvim_create_autocmd('FileType', {
         pattern = 'vue',
@@ -683,12 +692,6 @@ require('lazy').setup({
           vim.bo.commentstring = '<!-- %s -->'
         end,
       })
-
-      -- LSP servers and clients are able to communicate to each other what features they support.
-      --  By default, Neovim doesn't support everything that is in the LSP specification.
-      --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-      --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-      local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -711,32 +714,56 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {
-          init_options = {
-            plugins = {
-              {
-                name = '@vue/typescript-plugin',
-                location = require('mason-registry').get_package('vue-language-server'):get_install_path() .. '\\node_modules\\@vue\\language-server',
-                languages = { 'vue' },
+        -- ts_ls = {},
+        --
+
+        vtsls = {
+          settings = {
+            vtsls = {
+              tsserver = {
+                globalPlugins = {
+                  {
+                    name = '@vue/typescript-plugin',
+                    location = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server',
+                    languages = { 'vue' },
+                    configNamespace = 'typescript',
+                  },
+                },
               },
             },
           },
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
-        volar = {},
+        vue_ls = {
+          on_init = function(client)
+            client.handlers['tsserver/request'] = function(_, result, context)
+              local clients = vim.lsp.get_clients { bufnr = context.bufnr, name = 'vtsls' }
+              if #clients == 0 then
+                vim.notify('Could not found `vtsls` lsp client, vue_lsp would not work without it.', vim.log.levels.ERROR)
+                return
+              end
+              local ts_client = clients[1]
+
+              local param = unpack(result)
+              local id, command, payload = unpack(param)
+              ts_client:exec_cmd({
+                title = 'vue_request_forward', -- You can give title anything as it's used to represent a command in the UI, `:h Client:exec_cmd`
+                command = 'typescript.tsserverRequest',
+                arguments = {
+                  command,
+                  payload,
+                },
+              }, { bufnr = context.bufnr }, function(_, r)
+                local response_data = { { id, r.body } }
+                ---@diagnostic disable-next-line: param-type-mismatch
+                client:notify('tsserver/response', response_data)
+              end)
+            end
+          end,
+        },
         tailwindcss = {
           settings = {
             tailwindCSS = {
-              validate = true,
-              lint = {
-                cssConflict = 'warning',
-                invalidApply = 'error',
-                invalidScreen = 'error',
-                invalidVariant = 'error',
-                invalidConfigPath = 'error',
-                invalidTailwindDirective = 'error',
-                recommendedVariantOrder = 'warning',
-              },
               classAttributes = {
                 'class',
                 'className',
@@ -744,12 +771,6 @@ require('lazy').setup({
                 'classList',
                 'ngClass',
                 'ui',
-              },
-              includeLanguages = {
-                eelixir = 'html-eex',
-                eruby = 'erb',
-                templ = 'html',
-                htmlangular = 'html',
               },
               experimental = {
                 classRegex = {
@@ -760,8 +781,6 @@ require('lazy').setup({
             },
           },
         },
-        --
-
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -776,6 +795,33 @@ require('lazy').setup({
             },
           },
         },
+      }
+
+      local navic = require 'nvim-navic'
+      local navic_lsps = { 'vue_ls', 'vtsls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
+      for _, value in ipairs(navic_lsps) do
+        local server = servers[value] or {}
+        local original_on_attach = server.on_attach
+        server.on_attach = function(client, bufnr)
+          if type(original_on_attach) == 'function' then
+            original_on_attach(client, bufnr)
+          end
+          if value == 'vtsls' then
+            local ft = vim.api.nvim_get_option_value('filetype', {
+              buf = bufnr,
+            })
+            if ft == 'vue' then
+              return
+            end
+          end
+          navic.attach(client, bufnr)
+        end
+      end
+
+      ---@type MasonLspconfigSettings
+      ---@diagnostic disable-next-line: missing-fields
+      require('mason-lspconfig').setup {
+        automatic_enable = vim.tbl_keys(servers or {}),
       }
 
       -- Ensure the servers and tools above are installed
@@ -795,46 +841,14 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'prettierd',
-        'eslint_d',
-        -- 'copilot-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      local navic = require 'nvim-navic'
-      local navic_lsps = { 'volar', 'ts_ls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
-      for _, value in ipairs(navic_lsps) do
-        local server = servers[value] or {}
-        local original_on_attach = server.on_attach
-        server.on_attach = function(client, bufnr)
-          if type(original_on_attach) == 'function' then
-            original_on_attach(client, bufnr)
-          end
-          if value == 'ts_ls' then
-            local ft = vim.api.nvim_get_option_value('filetype', {
-              buf = bufnr,
-            })
-            if ft == 'vue' then
-              return
-            end
-          end
-          navic.attach(client, bufnr)
-        end
+      -- Installed LSPs are configured and enabled automatically with mason-lspconfig
+      -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
+      for server_name, config in pairs(servers) do
+        vim.lsp.config(server_name, config)
       end
-
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
     end,
   },
 
@@ -874,13 +888,13 @@ require('lazy').setup({
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        vue = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd' },
+        javascript = { 'prettierd' },
+        typescript = { 'prettierd' },
+        javascriptreact = { 'prettierd' },
+        typescriptreact = { 'prettierd' },
+        vue = { 'prettierd' },
+        html = { 'prettierd' },
       },
     },
   },
