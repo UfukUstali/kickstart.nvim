@@ -145,4 +145,21 @@ return {
     requires = 'neovim/nvim-lspconfig',
     opts = { highlight = true },
   },
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function()
+      require('supermaven-nvim').setup {
+        keymaps = {
+          accept_word = '<C-l>',
+        },
+        condition = function()
+          local filename = vim.fn.expand '%:t'
+          if filename:match '.env$' then
+            return true
+          end
+          return false
+        end,
+      }
+    end,
+  },
 }
