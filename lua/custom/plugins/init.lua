@@ -162,4 +162,13 @@ return {
       }
     end,
   },
+  {
+    'mistweaverco/kulala.nvim',
+    opts = {
+      global_keymaps = true,
+      ui = {
+        split_direction = 'horizontal',
+      },
+    },
+  },
 }
