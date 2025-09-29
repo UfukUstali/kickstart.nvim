@@ -134,6 +134,17 @@ return {
               'navic',
               color_correction = 'dynamic',
               navic_opts = nil,
+              draw_empty = true,
+            },
+          },
+        },
+        inactive_winbar = {
+          lualine_c = {
+            {
+              'navic',
+              color_correction = 'dynamic',
+              navic_opts = nil,
+              draw_empty = true,
             },
           },
         },
