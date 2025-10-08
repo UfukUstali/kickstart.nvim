@@ -601,6 +601,7 @@ require('lazy').setup({
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     opts = {
+      ignore_install = { 'latex' },
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       auto_install = true,
       highlight = {
