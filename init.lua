@@ -422,6 +422,24 @@ require('lazy').setup({
             },
           },
         },
+        r_language_server = {
+          cmd = { 'R', '--no-echo', '-e', 'languageserver::run()' },
+          filetypes = { 'r' },
+          root_dir = function(bufnr, on_dir)
+            on_dir(vim.fs.root(bufnr, '.git') or vim.uv.os_homedir())
+          end,
+          settings = {
+            r = {
+              lsp = {
+                rich_documentation = false,
+              },
+              server_capabilities = {
+                documentFormattingProvider = false,
+                documentRangeFormattingProvider = false,
+              },
+            },
+          },
+        },
       }
 
       local navic = require 'nvim-navic'
@@ -455,7 +473,15 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua',
         'prettierd',
+        'air',
       })
+      for i, v in ipairs(ensure_installed) do
+        if v == 'r_language_server' then
+          table.remove(ensure_installed, i)
+          vim.lsp.enable(v)
+          break
+        end
+      end
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       for server_name, config in pairs(servers) do
@@ -501,6 +527,8 @@ require('lazy').setup({
         typescriptreact = { 'prettierd' },
         vue = { 'prettierd' },
         html = { 'prettierd' },
+        r = { 'air' },
+        markdown = { 'injected' },
       },
     },
   },
