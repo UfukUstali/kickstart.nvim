@@ -207,15 +207,15 @@ return {
             R = {
               -- Can be a table or a function that
               -- returns a table (see below)
-              command = { 'radian' },
+              command = { 'R' },
             },
             r = {
               -- Can be a table or a function that
               -- returns a table (see below)
-              command = { 'radian' },
+              command = { 'R' },
             },
             quarto = {
-              command = { 'radian' },
+              command = { 'R' },
             },
           },
           -- How the repl window will be displayed
