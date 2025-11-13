@@ -449,6 +449,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua',
         'prettierd',
+        'eslint_d',
+        'cspell',
         'air',
       })
       for i, v in ipairs(ensure_installed) do
@@ -463,6 +465,84 @@ require('lazy').setup({
       for server_name, config in pairs(servers) do
         vim.lsp.config(server_name, config)
       end
+    end,
+  },
+  {
+    'mfussenegger/nvim-lint',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function()
+      local lint = require 'lint'
+
+      local efm = '%f:%l:%c - %m'
+      lint.linters.custom_cspell = {
+        name = 'custom_cspell',
+        cmd = 'cspell',
+        ignore_exitcode = true,
+        args = {
+          'lint',
+          '--config',
+          vim.fn.expand '$XDG_CONFIG_HOME' .. '/cspell/cspell.json',
+          '--no-color',
+          '--no-progress',
+          '--no-summary',
+          function()
+            return 'stdin://' .. vim.api.nvim_buf_get_name(0)
+          end,
+        },
+        stdin = true,
+        stream = 'stdout',
+        parser = function(output)
+          local lines = vim.split(output, '\n')
+          local qflist = vim.fn.getqflist { efm = efm, lines = lines }
+          local result = {}
+          for _, item in pairs(qflist.items) do
+            if item.valid == 1 then
+              local message = item.text:match '^%s*(.-)%s*$'
+              local word = message:match '%(.*%)'
+              local lnum = math.max(0, item.lnum - 1)
+              local col = math.max(0, item.col - 1)
+              local end_lnum = item.end_lnum > 0 and (item.end_lnum - 1) or lnum
+              local end_col = col + vim.fn.strdisplaywidth(word) - 2 or col
+              local diagnostic = {
+                lnum = lnum,
+                col = col,
+                end_lnum = end_lnum,
+                end_col = end_col,
+                message = message,
+                source = 'cspell',
+                severity = vim.diagnostic.severity.INFO,
+              }
+              table.insert(result, diagnostic)
+            end
+          end
+          return result
+        end,
+      }
+
+      lint.linters_by_ft = {
+        javascript = { 'eslint_d' },
+        javascriptreact = { 'eslint_d' },
+        typescript = { 'eslint_d' },
+        typescriptreact = { 'eslint_d' },
+        vue = { 'eslint_d' },
+        html = { 'eslint_d' },
+      }
+
+      -- Create autocommand which carries out the actual linting
+      -- on the specified events.
+      local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
+      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+        group = lint_augroup,
+        callback = function()
+          -- Only run the linter in buffers that you can modify in order to
+          -- avoid superfluous noise, notably within the handy LSP pop-ups that
+          -- describe the hovered symbol using Markdown.
+          if vim.bo.modifiable then
+            lint.try_lint()
+            lint.try_lint 'custom_cspell'
+          end
+        end,
+      })
     end,
   },
 
