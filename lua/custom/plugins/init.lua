@@ -251,6 +251,9 @@ return {
       vim.keymap.set('n', '<localleader>rR', '<cmd>IronRestart<cr>', { desc = '[R]EPL [R]estart' })
       vim.keymap.set('n', '<localleader>rF', '<cmd>IronFocus<cr>', { desc = '[R]EPL [F]ocus' })
       vim.keymap.set('n', '<localleader>rH', '<cmd>IronHide<cr>', { desc = '[R]EPL [H]ide' })
+      vim.keymap.set('n', '<leader>r<C-l>', function()
+        require('iron.core').send(nil, { '\x0c' })
+      end, { desc = '[R]EPL [C]lear' })
     end,
   },
 }
