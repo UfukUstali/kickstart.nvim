@@ -348,6 +348,8 @@ require('lazy').setup({
         -- pyright = {},
         rust_analyzer = {},
         docker_compose_language_service = {},
+        angularls = {},
+        kotlin_language_server = {},
 
         vtsls = {
           settings = {
