@@ -118,6 +118,45 @@ return {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
+      local modules = require('lualine_require').lazy_require {
+        utils = 'lualine.utils.utils',
+      }
+      ---shortens path by turning apple/orange -> a/orange
+      ---@param path string
+      ---@param sep string path separator
+      ---@param max_len integer maximum length of the full string
+      ---@return string
+      local function shorten_path(path, sep, max_len)
+        local len = #path
+        if len <= max_len then
+          return path
+        end
+
+        local segments = vim.split(path, sep, { plain = true })
+        for idx = 1, #segments - 1 do
+          if len <= max_len then
+            break
+          end
+
+          local segment = segments[idx]
+          -- keep 2 chars for dotfolders like ".config", else keep 1
+          local shortened = segment:sub(1, vim.startswith(segment, '.') and 2 or 1)
+          segments[idx] = shortened
+          len = len - (#segment - #shortened)
+        end
+
+        return table.concat(segments, sep)
+      end
+      local function cwd_component()
+        local cwd = vim.fn.getcwd(0)
+        local data = vim.fn.fnamemodify(cwd, ':~')
+        local shorting_target = 40
+        local winwidth = vim.fn.winwidth(0)
+        local estimated_space_available = winwidth - shorting_target
+        data = shorten_path(data, package.config:sub(1, 1), estimated_space_available)
+        data = modules.utils.stl_escape(data)
+        return data
+      end
       require('lualine').setup {
         theme = require('lualine.themes._tokyonight').get(),
         sections = {
@@ -137,6 +176,7 @@ return {
               draw_empty = true,
             },
           },
+          lualine_x = { { cwd_component } },
         },
         inactive_winbar = {
           lualine_c = {
