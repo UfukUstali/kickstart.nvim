@@ -450,7 +450,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua',
-        'prettierd',
+        'oxfmt',
         'eslint_d',
         'cspell',
         'air',
@@ -578,13 +578,13 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- python = { "isort", "black" },
-        json = { 'prettierd' },
-        javascript = { 'prettierd' },
-        typescript = { 'prettierd' },
-        javascriptreact = { 'prettierd' },
-        typescriptreact = { 'prettierd' },
-        vue = { 'prettierd' },
-        html = { 'prettierd' },
+        json = { 'oxfmt' },
+        javascript = { 'oxfmt' },
+        typescript = { 'oxfmt' },
+        javascriptreact = { 'oxfmt' },
+        typescriptreact = { 'oxfmt' },
+        vue = { 'oxfmt' },
+        html = { 'oxfmt' },
         r = { 'air' },
         markdown = { 'injected' },
       },
@@ -740,6 +740,7 @@ require('lazy').setup({
   },
   {
     'nvim-treesitter/nvim-treesitter',
+    commit = '42fc28ba918343ebfd5565147a42a26580579482',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs',
     opts = {
