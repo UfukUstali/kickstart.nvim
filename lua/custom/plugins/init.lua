@@ -296,4 +296,9 @@ return {
       end, { desc = '[R]EPL [C]lear' })
     end,
   },
+  {
+    'esmuellert/codediff.nvim',
+    dependencies = { 'MunifTanjim/nui.nvim' },
+    cmd = 'CodeDiff',
+  },
 }
