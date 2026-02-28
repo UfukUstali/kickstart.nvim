@@ -348,8 +348,8 @@ require('lazy').setup({
         -- pyright = {},
         rust_analyzer = {},
         docker_compose_language_service = {},
-        angularls = {},
-        kotlin_language_server = {},
+        -- angularls = {},
+        -- kotlin_language_server = {},
 
         vtsls = {
           settings = {
@@ -400,24 +400,24 @@ require('lazy').setup({
             },
           },
         },
-        r_language_server = {
-          cmd = { 'R', '--no-echo', '-e', 'languageserver::run()' },
-          filetypes = { 'r' },
-          root_dir = function(bufnr, on_dir)
-            on_dir(vim.fs.root(bufnr, '.git') or vim.uv.os_homedir())
-          end,
-          settings = {
-            r = {
-              lsp = {
-                rich_documentation = false,
-              },
-              server_capabilities = {
-                documentFormattingProvider = false,
-                documentRangeFormattingProvider = false,
-              },
-            },
-          },
-        },
+        -- r_language_server = {
+        --   cmd = { 'R', '--no-echo', '-e', 'languageserver::run()' },
+        --   filetypes = { 'r' },
+        --   root_dir = function(bufnr, on_dir)
+        --     on_dir(vim.fs.root(bufnr, '.git') or vim.uv.os_homedir())
+        --   end,
+        --   settings = {
+        --     r = {
+        --       lsp = {
+        --         rich_documentation = false,
+        --       },
+        --       server_capabilities = {
+        --         documentFormattingProvider = false,
+        --         documentRangeFormattingProvider = false,
+        --       },
+        --     },
+        --   },
+        -- },
       }
 
       local navic = require 'nvim-navic'
