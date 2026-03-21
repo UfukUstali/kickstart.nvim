@@ -454,6 +454,7 @@ require('lazy').setup({
         'eslint_d',
         'cspell',
         'air',
+        'ktfmt',
       })
       for i, v in ipairs(ensure_installed) do
         if v == 'r_language_server' then
@@ -591,6 +592,7 @@ require('lazy').setup({
         html = { 'oxfmt' },
         r = { 'air' },
         markdown = { 'injected' },
+        kotlin = { 'ktfmt' },
       },
     },
   },

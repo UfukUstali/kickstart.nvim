@@ -157,6 +157,17 @@ return {
         data = modules.utils.stl_escape(data)
         return data
       end
+      local function not_codediff()
+        local tab = vim.api.nvim_get_current_tabpage()
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          local name = vim.api.nvim_buf_get_name(buf)
+          if name:match '^codediff://' then
+            return false
+          end
+        end
+        return true
+      end
       require('lualine').setup {
         theme = require('lualine.themes._tokyonight').get(),
         sections = {
@@ -174,9 +185,10 @@ return {
               color_correction = 'dynamic',
               navic_opts = nil,
               draw_empty = true,
+              cond = not_codediff,
             },
           },
-          lualine_x = { { cwd_component } },
+          lualine_x = { { cwd_component, cond = not_codediff } },
         },
         inactive_winbar = {
           lualine_c = {
@@ -185,6 +197,7 @@ return {
               color_correction = 'dynamic',
               navic_opts = nil,
               draw_empty = true,
+              cond = not_codediff,
             },
           },
         },
