@@ -4,8 +4,33 @@ vim.o.wrap = false
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.keymap.set('n', '<C-u>', '<C-u>zt', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-d>', '<C-d>zt', { noremap = true, silent = true })
+local ns = vim.api.nvim_create_namespace 'scroll_flash'
+
+local function flash_line(lnum)
+  local buf = 0
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  vim.hl.range(buf, ns, 'IncSearch', { lnum - 1, 0 }, { lnum - 1, 999 }, { timeout = 200 })
+end
+local function feed(keys)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
+end
+
+-- Ctrl-d: highlight the line that will end up under cursor
+vim.keymap.set('n', '<C-d>', function()
+  local scroll = vim.o.scroll > 0 and vim.o.scroll or math.floor(vim.api.nvim_win_get_height(0) / 2)
+  flash_line(vim.fn.line '.' + scroll)
+  vim.defer_fn(function()
+    feed '<C-d>zt'
+  end, 100)
+end, { noremap = true, silent = true })
+
+-- Ctrl-u: highlight current line
+vim.keymap.set('n', '<C-u>', function()
+  flash_line(vim.fn.line '.')
+  vim.defer_fn(function()
+    feed '<C-u>zt'
+  end, 100)
+end, { noremap = true, silent = true })
 
 vim.keymap.set('x', 'p', '"_dP', { noremap = true })
 vim.keymap.set({ 'n', 'v' }, 'd', '"_d', { noremap = true })
