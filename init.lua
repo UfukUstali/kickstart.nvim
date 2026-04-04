@@ -9,7 +9,14 @@ local ns = vim.api.nvim_create_namespace 'scroll_flash'
 local function flash_line(lnum)
   local buf = 0
   vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-  vim.hl.range(buf, ns, 'IncSearch', { lnum - 1, 0 }, { lnum - 1, 999 }, { timeout = 200 })
+
+  vim.api.nvim_buf_set_extmark(buf, ns, lnum - 1, 0, {
+    line_hl_group = 'IncSearch',
+    strict = false,
+  })
+  vim.defer_fn(function()
+    vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  end, 200)
 end
 local function feed(keys)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), 'n', false)
