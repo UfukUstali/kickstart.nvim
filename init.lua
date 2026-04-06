@@ -198,7 +198,9 @@ require('lazy').setup({
         defaults = require('telescope.themes').get_ivy {
           layout_config = {
             height = 0.8,
-            preview_width = 0.65,
+            horizontal = {
+              preview_width = 0.65,
+            },
           },
           mappings = {
             i = {
