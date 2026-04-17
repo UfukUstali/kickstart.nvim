@@ -385,7 +385,7 @@ require('lazy').setup({
         rust_analyzer = {},
         docker_language_server = {},
         -- angularls = {},
-        -- kotlin_language_server = {},
+        kotlin_lsp = {},
 
         vtsls = {
           settings = {
