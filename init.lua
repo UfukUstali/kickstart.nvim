@@ -386,6 +386,7 @@ require('lazy').setup({
         docker_language_server = {},
         -- angularls = {},
         kotlin_lsp = {},
+        jdtls = {},
 
         vtsls = {
           settings = {
@@ -492,6 +493,7 @@ require('lazy').setup({
         'oxfmt',
         'air',
         'ktfmt',
+        'google-java-format',
       })
       for i, v in ipairs(ensure_installed) do
         if v == 'r_language_server' then
@@ -552,6 +554,7 @@ require('lazy').setup({
         r = { 'air' },
         markdown = { 'injected' },
         kotlin = { 'ktfmt' },
+        java = { 'google-java-format' },
       },
     },
   },
