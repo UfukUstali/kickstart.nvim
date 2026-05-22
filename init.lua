@@ -440,6 +440,7 @@ require('lazy').setup({
           },
         },
         codebook = {},
+        jsonls = {},
         -- r_language_server = {
         --   cmd = { 'R', '--no-echo', '-e', 'languageserver::run()' },
         --   filetypes = { 'r' },
