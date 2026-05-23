@@ -305,7 +305,7 @@ require('lazy').setup({
           map('gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
           ---@param client vim.lsp.Client
-          ---@param method vim.lsp.protocol.Method
+          ---@param method vim.lsp.protocol.Method.ClientToServer | vim.lsp.protocol.Method.Registration
           ---@param bufnr? integer some lsp support methods only in specific files
           ---@return boolean
           local function client_supports_method(client, method, bufnr)
@@ -552,6 +552,7 @@ require('lazy').setup({
         typescriptreact = { 'oxfmt' },
         vue = { 'oxfmt' },
         html = { 'oxfmt' },
+        css = { 'oxfmt' },
         r = { 'air' },
         markdown = { 'injected' },
         kotlin = { 'ktfmt' },
