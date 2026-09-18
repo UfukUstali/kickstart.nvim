@@ -411,6 +411,7 @@ require('lazy').setup({
         tailwindcss = {
           settings = {
             tailwindCSS = {
+              classFunctions = { 'tw', 'clsx', 'tw\\.[a-z-]+' },
               classAttributes = {
                 'class',
                 'className',
@@ -527,6 +528,21 @@ require('lazy').setup({
     },
     opts = {
       notify_on_error = false,
+      formatters = {
+        oxfmt = function()
+          local util = require 'conform.util'
+          local config_root = util.root_file { '.oxfmtrc.json', '.oxfmtrc.jsonc', 'oxfmt.config.ts', 'oxfmt.config.mts' }
+          local find_command = util.from_node_modules 'oxfmt'
+          return {
+            command = function(self, ctx)
+              -- Resolve beside the Oxfmt config so a nested Vite+ wrapper cannot replace standalone Oxfmt.
+              local dirname = config_root(self, ctx) or ctx.dirname
+              return find_command(self, { dirname = dirname })
+            end,
+            cwd = config_root,
+          }
+        end,
+      },
       format_on_save = function(bufnr)
         if vim.g.disable_autoformat then
           return
