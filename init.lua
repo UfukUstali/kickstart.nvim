@@ -124,7 +124,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      current_line_blame_formatter = true,
+      current_line_blame = true,
     },
   },
 
