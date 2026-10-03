@@ -388,26 +388,7 @@ require('lazy').setup({
         kotlin_lsp = {},
         jdtls = {},
 
-        vtsls = {
-          settings = {
-            vtsls = {
-              autoUseWorkspaceTsdk = true,
-              tsserver = {
-                globalPlugins = {
-                  {
-                    name = '@vue/typescript-plugin',
-                    location = vim.fn.expand '$MASON/packages' .. '/vue-language-server' .. '/node_modules/@vue/language-server',
-                    languages = { 'vue' },
-                    configNamespace = 'typescript',
-                    enableForWorkspaceTypeScriptVersions = true,
-                  },
-                },
-              },
-            },
-          },
-          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-        },
-        vue_ls = {},
+        tsc = {},
         tailwindcss = {
           settings = {
             tailwindCSS = {
@@ -463,21 +444,13 @@ require('lazy').setup({
       }
 
       local navic = require 'nvim-navic'
-      local navic_lsps = { 'vue_ls', 'vtsls', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
+      local navic_lsps = { 'tsc', 'lua_ls', 'gopls', 'rust_analyzer', 'clangd' }
       for _, value in ipairs(navic_lsps) do
         local server = servers[value] or {}
         local original_on_attach = server.on_attach
         server.on_attach = function(client, bufnr)
           if type(original_on_attach) == 'function' then
             original_on_attach(client, bufnr)
-          end
-          if value == 'vtsls' then
-            local ft = vim.api.nvim_get_option_value('filetype', {
-              buf = bufnr,
-            })
-            if ft == 'vue' then
-              return
-            end
           end
           navic.attach(client, bufnr)
         end
